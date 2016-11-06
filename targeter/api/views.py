@@ -1,11 +1,14 @@
+from datetime import datetime
+
 import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.conf import settings
 from django.shortcuts import redirect
 
-from core.models import User
+from core.models import User, Post, Coordinate
 from api.fetch import fetch_media
+from api.filter import is_old, has_caption
 
 
 class AuthorizeView(APIView):
@@ -41,6 +44,7 @@ class CallbackView(APIView):
             'code': code,
             'grant_type': 'authorization_code',
         }).json()
+
         User.objects.update_or_create(
             user_id=json['user']['id'],
             defaults={
@@ -56,13 +60,31 @@ class StartView(APIView):
     """
 
     def get(self, request, *args, **kwargs):
-        user = User.objects.first()
-        coordinate = user.coordinate_list.first()
-        res = fetch_media.delay(
-            user.access_token,
-            coordinate.lat,
-            coordinate.lng
-        )
-        out = res.get()
-        return Response(out)
+        for coordinate in Coordinate.objects.exclude(user__access_token=None):
+            res = fetch_media.delay(
+                coordinate.user.access_token,
+                coordinate.lat,
+                coordinate.lng
+            ).get()
+
+            data = filter(is_old, res['data'])
+            data = filter(has_caption, data)
+
+            for post in data:
+                user_data = post['user']
+                user, created = User.objects.update_or_create(
+                    user_id=user_data['id'],
+                    defaults={'username': user_data['username']}
+                )
+
+                created_time = datetime.fromtimestamp(int(post['created_time']))
+                Post.objects.update_or_create(
+                    post_id=post['id'],
+                    defaults={
+                        'text': post['caption']['text'],
+                        'created_time': created_time,
+                        'user': user
+                    }
+                )
+        return Response(data)
 
