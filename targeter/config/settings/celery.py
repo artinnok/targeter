@@ -11,5 +11,6 @@ result_backend = 'rpc://'
 imports = ['api.fetch']
 
 task_routes = {
-    'fetch': 'fetch'
+    'fetch': 'fetch',
+    'fetch_media': 'fetch'
 }

@@ -5,7 +5,7 @@ from django.conf import settings
 from django.shortcuts import redirect
 
 from core.models import User
-from api.fetch import fetch
+from api.fetch import fetch_media
 
 
 class AuthorizeView(APIView):
@@ -56,7 +56,13 @@ class StartView(APIView):
     """
 
     def get(self, request, *args, **kwargs):
-        access_token = User.objects.first().access_token
-        res = fetch.delay('/tags/продажа', access_token).get()
-        return Response(res)
+        user = User.objects.first()
+        coordinate = user.coordinate_list.first()
+        res = fetch_media.delay(
+            user.access_token,
+            coordinate.lat,
+            coordinate.lng
+        )
+        out = res.get()
+        return Response(out)
 
