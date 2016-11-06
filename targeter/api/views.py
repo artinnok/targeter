@@ -21,7 +21,7 @@ class AuthorizeView(APIView):
         return redirect(self.url.format(
             client_id=settings.CLIENT_ID,
             redirect_uri=settings.REDIRECT_URI,
-            scope='public_content likes'
+            scope='public_content follower_list comments relationships likes'
         ))
 
 
@@ -40,12 +40,11 @@ class CallbackView(APIView):
             'code': code,
             'grant_type': 'authorization_code',
         }).json()
-        user = json['user']
         User.objects.update_or_create(
-            user_id=user['id'],
+            user_id=json['user']['id'],
             defaults={
-                'username': user['username'],
+                'username': json['user']['username'],
                 'access_token': json['access_token']
             })
-        return Response(user)
+        return Response(json['user'])
 
