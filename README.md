@@ -1,1 +1,1 @@
-# moderator by Artem Innokentiev
+# targeter by Artem Innokentiev
