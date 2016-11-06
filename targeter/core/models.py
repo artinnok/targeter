@@ -29,3 +29,25 @@ class User(cm.Common):
 
     def __str__(self):
         return str(self.user_id)
+
+
+class Tag(cm.Common):
+    """
+    Поисковые хэштэги Пользователя
+    """
+    user = models.ForeignKey(
+        'core.User',
+        verbose_name='Пользователь',
+        related_name='tag_list'
+    )
+    text = models.CharField(
+        max_length=30,
+        verbose_name='Текст'
+    )
+
+    class Meta:
+        verbose_name = 'хэштэг'
+        verbose_name_plural = 'хэштэги'
+
+    def __str__(self):
+        return self.text
