@@ -1,7 +1,6 @@
 from django.db import models
 
 from core import common_models as cm
-from core import behaviors as bh
 
 
 class User(cm.Common):
@@ -31,14 +30,14 @@ class User(cm.Common):
         return str(self.user_id)
 
 
-class Tag(cm.Common):
+class KeyWord(cm.Common):
     """
-    Поисковые хэштэги Пользователя
+    Ключевые слова Пользователя, по которым производится поиск
     """
     user = models.ForeignKey(
         'core.User',
         verbose_name='Пользователь',
-        related_name='tag_list'
+        related_name='keyword_list'
     )
     text = models.CharField(
         max_length=30,
@@ -46,8 +45,36 @@ class Tag(cm.Common):
     )
 
     class Meta:
-        verbose_name = 'хэштэг'
-        verbose_name_plural = 'хэштэги'
+        verbose_name = 'ключевое слово'
+        verbose_name_plural = 'ключевые слова'
 
     def __str__(self):
         return self.text
+
+
+class Coordinate(cm.Common):
+    """
+    Координаты Пользователя, по которым производится поиск
+    """
+    user = models.ForeignKey(
+        'core.User',
+        verbose_name='Пользователь',
+        related_name='coordinate_list'
+    )
+    lat = models.DecimalField(
+        verbose_name='Широта',
+        max_digits=9,
+        decimal_places=6
+    )
+    lng = models.DecimalField(
+        verbose_name='Долгота',
+        max_digits=9,
+        decimal_places=6
+    )
+
+    class Meta:
+        verbose_name = 'координата'
+        verbose_name_plural = 'координаты'
+
+    def __str__(self):
+        return 'LAT: {}, LNG: {}'.format(self.lat, self.lng)
