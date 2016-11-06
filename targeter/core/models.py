@@ -19,7 +19,8 @@ class User(cm.Common):
     )
     access_token = models.CharField(
         max_length=200,
-        verbose_name='Токен'
+        verbose_name='Токен',
+        blank=True
     )
 
     class Meta:
@@ -35,13 +36,17 @@ class Post(bh.Textable, cm.Common):
     """
     Пост Пользователя
     """
-    post_id = models.BigIntegerField(
-        verbose_name='ID поста'
-    )
     user = models.ForeignKey(
         'core.User',
         verbose_name='Пользователь',
         related_name='post_list'
+    )
+    post_id = models.CharField(
+        max_length=100,
+        verbose_name='ID поста'
+    )
+    created_time = models.DateTimeField(
+        verbose_name='Время публикации'
     )
 
     class Meta:
@@ -92,9 +97,6 @@ class Coordinate(cm.Common):
         verbose_name='Долгота',
         max_digits=20,
         decimal_places=14
-    )
-    created_time = models.DateTimeField(
-        verbose_name='Время публикации'
     )
 
     class Meta:
