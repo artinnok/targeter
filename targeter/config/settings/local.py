@@ -18,6 +18,10 @@ INSTALLED_APPS = INSTALLED_APPS + [
     'debug_toolbar',
 ]
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+MIDDLEWARE_CLASSES = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+] + MIDDLEWARE_CLASSES
 
-START_URL = 'http://localhost:8000'
+INTERNAL_IPS = '127.0.0.1'
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
