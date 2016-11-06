@@ -3,7 +3,7 @@ from config.settings.base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['moder-bot.ru', 'www.moder-bot.ru']
+ALLOWED_HOSTS = ['target-bot', 'www.target-bot.ru']
 
 DATABASES = {
     'default': {
@@ -19,5 +19,3 @@ DATABASES = {
 ROOT_URLCONF = 'config.urls.production'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
-
-START_URL = 'http://moder-bot.ru'

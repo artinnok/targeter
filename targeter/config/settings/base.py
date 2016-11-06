@@ -3,7 +3,7 @@ import os
 from unipath import Path
 
 from config.settings.rest import *
-from config.settings.vk import *
+from config.settings.instagram import *
 
 BASE_DIR = Path(__file__).ancestor(3)
 
@@ -51,7 +51,7 @@ AUTH_PASSWORD_VALIDATORS = [
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR.child('templates')],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,7 +75,7 @@ USE_L10N = True
 USE_TZ = True
 
 # static
-STATICFILES_DIRS = [BASE_DIR.child('static').child('build')]
+STATICFILES_DIRS = []
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR.child("collect_static")
 
