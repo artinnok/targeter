@@ -63,13 +63,13 @@ class Coordinate(cm.Common):
     )
     lat = models.DecimalField(
         verbose_name='Широта',
-        max_digits=9,
-        decimal_places=6
+        max_digits=20,
+        decimal_places=14
     )
     lng = models.DecimalField(
         verbose_name='Долгота',
-        max_digits=9,
-        decimal_places=6
+        max_digits=20,
+        decimal_places=14
     )
 
     class Meta:
@@ -77,4 +77,4 @@ class Coordinate(cm.Common):
         verbose_name_plural = 'координаты'
 
     def __str__(self):
-        return 'LAT: {}, LNG: {}'.format(self.lat, self.lng)
+        return 'Широта: {}, Долгота: {}'.format(self.lat, self.lng)
