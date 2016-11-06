@@ -93,6 +93,9 @@ class Coordinate(cm.Common):
         max_digits=20,
         decimal_places=14
     )
+    created_time = models.DateTimeField(
+        verbose_name='Время публикации'
+    )
 
     class Meta:
         verbose_name = 'координата'
