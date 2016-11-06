@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from django.conf import settings
 from django.shortcuts import redirect
 
+from core.models import User
+
 
 class AuthorizeView(APIView):
     """
@@ -38,5 +40,12 @@ class CallbackView(APIView):
             'code': code,
             'grant_type': 'authorization_code',
         }).json()
-        return Response(json)
+        user = json['user']
+        User.objects.update_or_create(
+            user_id=user['id'],
+            defaults={
+                'username': user['username'],
+                'access_token': json['access_token']
+            })
+        return Response(user)
 
