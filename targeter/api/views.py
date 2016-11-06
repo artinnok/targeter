@@ -5,6 +5,7 @@ from django.conf import settings
 from django.shortcuts import redirect
 
 from core.models import User
+from api.fetch import fetch
 
 
 class AuthorizeView(APIView):
@@ -47,4 +48,15 @@ class CallbackView(APIView):
                 'access_token': json['access_token']
             })
         return Response(json['user'])
+
+
+class StartView(APIView):
+    """
+    Тестовая вьюха
+    """
+
+    def get(self, request, *args, **kwargs):
+        access_token = User.objects.first().access_token
+        res = fetch.delay('/tags/продажа', access_token).get()
+        return Response(res)
 

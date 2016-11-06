@@ -7,3 +7,9 @@ task_serializer = 'json'
 
 result_serializer = 'json'
 result_backend = 'rpc://'
+
+imports = ['api.fetch']
+
+task_routes = {
+    'fetch': 'fetch'
+}

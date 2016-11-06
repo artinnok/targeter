@@ -1,14 +1,19 @@
 import requests
+from celery import shared_task
 
 
-def base_fetch(method, parameters, access_token=''):
-    url = ('https://api.vk.com/method/'
+def base_fetch(method, access_token, parameters=''):
+    url = ('https://api.instagram.com/v1'
            '{method_name}?'
-           '{parameters}&'
-           'access_token={access_token}'
-           '&v=5.59')
+           'access_token={access_token}&'
+           '{parameters}')
     return requests.get(url.format(
         method_name=method,
-        parameters=parameters,
-        access_token=access_token
+        access_token=access_token,
+        parameters=parameters
     )).json()
+
+
+@shared_task(name='fetch', rate_limit='500/h')
+def fetch(*args):
+    return base_fetch(*args)
