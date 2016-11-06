@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from api.views import AuthorizeView, CallbackView, StartView
+from api.views import AuthorizeView, CallbackView, StartView, GoodView
 
 
 urlpatterns = [
@@ -18,5 +18,9 @@ urlpatterns = [
         regex=r'^start/$',
         view=StartView.as_view(),
         name='start'
+    ),
+    url(regex=r'^good/$',
+        view=GoodView.as_view(),
+        name='good'
     ),
 ]

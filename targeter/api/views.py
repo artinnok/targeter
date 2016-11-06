@@ -2,6 +2,7 @@ from datetime import datetime
 
 import requests
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from django.conf import settings
 from django.shortcuts import redirect
@@ -9,6 +10,7 @@ from django.shortcuts import redirect
 from core.models import User, Post, Coordinate
 from api.fetch import fetch_media
 from api.filter import is_old, has_caption
+from api.serializers import PostSerializer
 
 
 class AuthorizeView(APIView):
@@ -37,6 +39,8 @@ class CallbackView(APIView):
 
     def get(self, request, *args, **kwargs):
         code = request.query_params['code']
+
+        # send auth data to Instagram servers
         json = requests.post(self.url, data={
             'client_id': settings.CLIENT_ID,
             'client_secret': settings.CLIENT_SECRET,
@@ -45,6 +49,7 @@ class CallbackView(APIView):
             'grant_type': 'authorization_code',
         }).json()
 
+        # save retrieved data
         User.objects.update_or_create(
             user_id=json['user']['id'],
             defaults={
@@ -56,9 +61,8 @@ class CallbackView(APIView):
 
 class StartView(APIView):
     """
-    Тестовая вьюха
+    Сохраняет данные по локациям
     """
-
     def get(self, request, *args, **kwargs):
         for coordinate in Coordinate.objects.exclude(user__access_token=None):
             res = fetch_media.delay(
@@ -67,14 +71,15 @@ class StartView(APIView):
                 coordinate.lng
             ).get()
 
+            # filter useless data
             data = filter(is_old, res['data'])
             data = filter(has_caption, data)
 
+            # save good data
             for post in data:
-                user_data = post['user']
                 user, created = User.objects.update_or_create(
-                    user_id=user_data['id'],
-                    defaults={'username': user_data['username']}
+                    user_id=post['user']['id'],
+                    defaults={'username': post['user']['username']}
                 )
 
                 created_time = datetime.fromtimestamp(int(post['created_time']))
@@ -88,3 +93,10 @@ class StartView(APIView):
                 )
         return Response(data)
 
+
+class GoodView(ListAPIView):
+    """
+    Получает данные
+    """
+    serializer_class = PostSerializer
+    queryset = Post.objects.filter(text__icontains='продаю')
