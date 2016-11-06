@@ -1,6 +1,7 @@
 from django.db import models
 
 from core import common_models as cm
+from core import behaviors as bh
 
 
 class User(cm.Common):
@@ -28,6 +29,27 @@ class User(cm.Common):
 
     def __str__(self):
         return str(self.user_id)
+
+
+class Post(bh.Textable, cm.Common):
+    """
+    Пост Пользователя
+    """
+    post_id = models.BigIntegerField(
+        verbose_name='ID поста'
+    )
+    user = models.ForeignKey(
+        'core.User',
+        verbose_name='Пользователь',
+        related_name='post_list'
+    )
+
+    class Meta:
+        verbose_name = 'пост'
+        verbose_name_plural = 'посты'
+
+    def __str__(self):
+        return self.text
 
 
 class KeyWord(cm.Common):
